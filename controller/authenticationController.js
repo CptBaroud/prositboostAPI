@@ -30,8 +30,7 @@ let authController = {
                         error: err,
                         stack: err.stack
                     })
-                } else {
-                    console.log(user)
+                } else if (user) {
                     bcrypt
                         .compare(req.body.password, user.password, function (error, result) {
                         if (error) {
@@ -53,6 +52,10 @@ let authController = {
                                 })
                             }
                         }
+                    })
+                } else {
+                    res.status(401).json({
+                        message: 'L\'user n\'existe pas'
                     })
                 }
             })
