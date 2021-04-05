@@ -1,13 +1,15 @@
 const nodemailer = require("nodemailer");
 const Mailgen = require("mailgen");
+const { google } = require('googleapis')
 
-let transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD
-    },
-});
+const redirect_url = 'https://developers.google.com/oauthplayground'
+
+const oAuht2Client = new google.auth.OAuth2(
+    process.env.EMAIL_CLIENT_ID,
+    process.env.EMAIL_TOKEN,
+    redirect_url
+)
+oAuht2Client.setCredentials({refresh_token: process.env.EMAIL_REFRESH_TOKEN})
 
 let MailGenerator = new Mailgen({
     theme: "cerberus",
@@ -18,9 +20,9 @@ let MailGenerator = new Mailgen({
     },
 });
 
+
 let mailController = {
-    sendRegisterMail (data) {
-        console.log(data)
+     async sendRegisterMail (data) {
         let response = {
             body: {
                 name: data.name,
@@ -47,107 +49,35 @@ let mailController = {
             html: mail
         };
 
-        transporter
-            .sendMail(message)
-            .then(() => {
-                console.log('c parti')
-            })
-            .catch((error) => console.error(error));
-    },
+         let accessToken = ''
 
-    sendClosedTicket (data) {
-        let response = {
-            body: {
-                name: data.name,
-                intro: ["Votre ticket \""+data.object + "\" à été cloturé", ""],
-                signature: false,
-                action: {
-                    instructions: 'Télécharger le rapport d\'intervention',
-                    button: {
-                        color: '#22BC66', // Optional action button color
-                        text: 'PDF',
-                        link: process.env.API_LINK + '/' + data._id
-                    }
-                },
-            },
-        };
+         try {
+             accessToken = await oAuht2Client.getAccessToken()
+         } catch (e) {
+             console.error(e)
+         }
 
-        let mail = MailGenerator.generate(response);
-
-        let message = {
-            from: 'noreply.eviticket@gmail.com',
-            to: data.mail,
-            subject: "Votre compte eviticket",
-            html: mail,
-        };
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                type: 'OAuth2',
+                user: process.env.EMAIL_USER,
+                clientId: process.env.EMAIL_CLIENT_ID,
+                clientSecret: process.env.EMAIL_TOKEN,
+                refreshToken: process.env.EMAIL_REFRESH_TOKEN,
+                accessToken: accessToken
+            }
+        });
 
         transporter
             .sendMail(message)
             .then(() => {
-                console.log('c parti')
+                console.log('Le mail à été envoyé')
             })
-            .catch((error) => console.error(error));
-    },
-
-    sendClosedIntervention (data) {
-        let response = {
-            body: {
-                name: data.agent.name,
-                intro: ["Votre intervention à été cloturé", ""],
-                signature: false,
-                action: {
-                    instructions: 'Télécharger le rapport d\'intervention',
-                    button: {
-                        color: '#22BC66', // Optional action button color
-                        text: 'PDF',
-                        link: process.env.API_LINK + '/' + data._id + '/' + data._id + '.pdf'
-                    }
-                },
-            },
-        };
-
-        let mail = MailGenerator.generate(response);
-
-        let message = {
-            from: 'noreply.eviticket@gmail.com',
-            to: data.contact.mail,
-            subject: "Votre rapport d'intervention",
-            html: mail,
-        };
-
-        transporter
-            .sendMail(message)
-            .then(() => {
-                console.log('c parti')
-            })
-            .catch((error) => console.error(error));
-    },
-
-    sendPlanificatedIntervention (data) {
-        let response = {
-            body: {
-                name: data.name,
-                intro: ["Une intervention à été planifié par " + data.agent.name + ' le ' + data.interventionDate + ' à ' + data.interventionTime, ""],
-                signature: false,
-                //outro: "Nous vous conseillons vivement de changer ce mot de passe généré de manière automatique pour des raisons de sécurité"
-            },
-        };
-
-        let mail = MailGenerator.generate(response);
-
-        let message = {
-            from: 'noreply.eviticket@gmail.com',
-            to: data.contact.mail,
-            subject: "Votre compte eviticket",
-            html: mail,
-        };
-
-        transporter
-            .sendMail(message)
-            .then(() => {
-                console.log('c parti')
-            })
-            .catch((error) => console.error(error));
+            .catch((error) =>  {
+                console.log('Nodemailer')
+                console.error(error)
+            });
     }
 }
 
