@@ -40,6 +40,7 @@ const httpIo = require('socket.io')(httpServer, {
 
 httpIo.on('connection', (socket) => {
   console.log('Http io socket connected : ' + socket.id)
+  httpIo.emit('connection', 'Socket succesfully connected')
   socket.on('event', (data) => {
     console.log(data)
     httpIo.emit(data)

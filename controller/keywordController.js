@@ -62,6 +62,10 @@ const keywordController = {
                 function (err, doc) {
                     if (!err) {
                         console.log(doc)
+                        if (process.env.DEV) {
+                            req.app.httpIo.emit('prosit', {action: 'fetch'})
+                        }
+                        req.app.httpsIo.emit('prosit', {action: 'fetch'})
                         res.status(200).send(doc)
                     } else {
                         res.status(500).json({

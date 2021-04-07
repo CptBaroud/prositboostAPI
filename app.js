@@ -18,6 +18,7 @@ const loginRouter = require('./routes/authRouter');
 const prositRouter = require('./routes/prositRouter');
 const keywordRouter = require('./routes/keywordRouter');
 const kivaferkoiRouter = require('./routes/kivaferkoiRouter');
+const notificationRouter = require('./routes/notificationRouter');
 const confRouter = require('./routes/confRouter');
 
 // Initiliastion de la connection à la base mongodb
@@ -57,6 +58,7 @@ app.use('/team', teamRouter);
 app.use('/login', loginRouter);
 app.use('/kivaferkoi', kivaferkoiRouter);
 app.use('/keywords', keywordRouter);
+app.use('/notification', notificationRouter);
 app.use('/conf', confRouter);
 
 // catch 404 and forward to error handler

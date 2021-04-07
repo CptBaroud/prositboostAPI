@@ -118,6 +118,10 @@ let kivaferkoiController = {
                 .populate('notYetPicked picked alreadyPicked')
                 .exec(function (err, doc) {
                     if (!err) {
+                        if (process.env.DEV) {
+                            req.app.httpIo.emit('kivaferkoi', {action: 'fetch'})
+                        }
+                        req.app.httpsIo.emit('kivaferkoi', {action: 'fetch'})
                         res.status(200).send(doc)
                     } else {
                         res.status(500).json({

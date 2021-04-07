@@ -22,7 +22,7 @@ let teamController = {
 
     getCurrentTeam (req, res) {
         const num = req.query.num % 9
-        console.log(num)
+
         teamModel
             .findOne({num: num})
             .populate('scribe secretaire animateur gestionaire')

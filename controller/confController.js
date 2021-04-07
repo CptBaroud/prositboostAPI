@@ -39,6 +39,10 @@ const confController = {
                 {useFindAndModify: false, new: true})
             .exec(function (err, doc) {
                 if (!err) {
+                    if (process.env.DEV) {
+                        req.app.httpIo.emit('numProsit', {action: 'fetch', numProsit: req.body.numProsit})
+                    }
+                    req.app.httpsIo.emit('numProsit', {action: 'fetch', numProsit: req.body.numProsit})
                     res.status(200).send(doc)
                 } else {
                     res.status(500).json({

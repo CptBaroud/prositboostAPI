@@ -11,7 +11,6 @@ const prositController = {
      */
     async add(req, res) {
         const data = req.body.prosit
-        console.log(data)
 
         // On ajoute tout les mots clés dans la collection
         async function addKeyword() {
@@ -89,6 +88,10 @@ const prositController = {
         // On save le prosit
         new_prosit.save((err, doc) => {
             if (!err) {
+                if (process.env.DEV) {
+                    req.app.httpIo.emit('prosit', {action: 'fetch'})
+                }
+                req.app.httpsIo.emit('prosit', {action: 'fetch'})
                 res.status(200).send(doc)
             } else {
                 res.status(500).json({
