@@ -14,7 +14,7 @@ oAuht2Client.setCredentials({refresh_token: process.env.EMAIL_REFRESH_TOKEN})
 let MailGenerator = new Mailgen({
     theme: "cerberus",
     product: {
-        name: "EviTicket",
+        name: "PrositBoost",
         link: process.env.SITE_LINK,
         copyright: 'Copyright © ' + new Date().getFullYear() + ' PrositBoost. Tout droits réservés',
     },

@@ -13,7 +13,6 @@ let authController = {
      * @param res
      */
     login(req, res) {
-        console.log(req.body)
         users
             .findOne({mail: req.body.mail.toLowerCase()})
             .exec(function (err, user) {
@@ -24,7 +23,6 @@ let authController = {
                         stack: err.stack
                     })
                 } else if (!user && err) {
-                    console.log(err)
                     res.status(202).json({
                         message: "Cette adresse mail n'est associée à aucun compte",
                         error: err,
@@ -46,9 +44,7 @@ let authController = {
                                 })
                             } else {
                                 res.status(401).json({
-                                    message: 'Le mot de passe est incorrect',
-                                    error: error,
-                                    stack: error.stack
+                                    message: 'Le mot de passe est incorrect'
                                 })
                             }
                         }

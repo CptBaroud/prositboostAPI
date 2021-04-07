@@ -7,6 +7,7 @@ const users_schema = new Schema({
     password: String,
     mail: String,
     role: Number,
+    avatar: String,
     theme: Boolean
 })
 
