@@ -73,20 +73,20 @@ const httpsIo = require('socket.io')(httpsServer, {
 
 httpsIo.on('connection', (socket) => {
   console.log('Https connected trought : ' + socket.id)
-  httpsIo.emit('news', 'Nouvelle connection https au socket ' + socket.id)
+  httpsIo.emit('connection', 'Nouvelle connection https au socket ' + socket.id)
   socket.on('event', (data) => {
     console.log(data)
-    httpIo.emit(data)
+    httpsIo.emit(data)
   })
 
   socket.on('prosit', (data) => {
     console.log(data)
-    httpIo.emit('prosit', data)
+    httpsIo.emit('prosit', data)
   })
 
   socket.on('kivaferkoi', (data) => {
     console.log(data)
-    httpIo.emit('kivaferkoi', data)
+    httpsIo.emit('kivaferkoi', data)
   })
 })
 
